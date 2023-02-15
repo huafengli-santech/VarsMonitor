@@ -1,0 +1,147 @@
+﻿<Window x:Class="MonitorApp.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:conv="clr-namespace:MonitorApp.Converts"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:MonitorApp"
+        xmlns:lv="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Title="VarsMonitor"
+        Width="800"
+        Height="450"
+        mc:Ignorable="d">
+    <Window.Resources>
+        <conv:BoolToVisBilityConvert x:Key="BoolToVisConv" />
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.3*" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <StackPanel>
+            <!--  连接  -->
+            <StackPanel HorizontalAlignment="Center"
+                        Orientation="Horizontal">
+                <ComboBox Name="IP"
+                          Margin="5,0"
+                          SelectedItem="SelecIp"
+                          Style="{StaticResource cmbstyle}"
+                          Text="{Binding SelecIp}" />
+                <Button Name="btnRefresh"
+                        Width="24"
+                        Height="24"
+                        Content="刷"
+                        Style="{StaticResource menuButton}" />
+            </StackPanel>
+            <Button Name="btnConnect"
+                    Content="连接"
+                    Style="{StaticResource menuButton}" />
+            <Button x:Name="btnEnableFault"
+                    Content="订阅中断"
+                    Style="{StaticResource menuButton}" />
+            <StackPanel Orientation="Vertical">
+                <TextBlock Margin="17,0,5,0"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Text="刷新率:(s)" />
+                <ComboBox Name="Rate"
+                          Width="150"
+                          SelectedItem="SelecRate"
+                          Style="{StaticResource cmbstyle}"
+                          Text="{Binding SelecRate}" />
+            </StackPanel>
+        </StackPanel>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.15*" />
+                <RowDefinition Height="0.15*" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <!--  轴参数  -->
+            <StackPanel Grid.Row="0"
+                        Orientation="Horizontal">
+                <Button Name="OpenLogFunc"
+                        Width="32"
+                        Height="32"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="&#xe627;"
+                        Foreground="#3f85ff"
+                        Style="{StaticResource FaultButton}"
+                        Tag="{Binding FaultCount}"
+                        ToolTip="打开Log" />
+                <TextBlock Name="Logs"
+                           Grid.Column="1"
+                           Width="auto"
+                           MinWidth="450"
+                           Margin="10,0"
+                           VerticalAlignment="Center"
+                           FontSize="17"
+                           Foreground="#3f85ff" />
+                <Button Name="ClearFaultFunc"
+                        Width="32"
+                        Height="32"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="&#xe623;"
+                        Foreground="#3f85ff"
+                        Style="{StaticResource FaultButton}"
+                        Tag="0"
+                        ToolTip="清除Log角标" />
+            </StackPanel>
+            <StackPanel Grid.Row="1"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+                <!--  轴号选择  -->
+                <TextBlock Margin="10,0"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center">
+                    监控变量:
+                </TextBlock>
+                <CheckBox x:Name="cbxLog"
+                          Margin="10,0"
+                          Content="Log"
+                          IsChecked="{Binding IsLog}" />
+                <CheckBox x:Name="cbxRam"
+                          Margin="10,0"
+                          Content="内存"
+                          IsChecked="{Binding IsRam}" />
+                <CheckBox x:Name="cbxUsage"
+                          Margin="10,0"
+                          Content="使用率"
+                          IsChecked="{Binding IsUsage}" />
+                <CheckBox x:Name="cbxStemperature"
+                          Margin="10,0"
+                          Content="系统温度"
+                          IsChecked="{Binding IsStemp}" />
+                <CheckBox x:Name="cbxCtemperature"
+                          Margin="10,0"
+                          Content="CPU温度"
+                          IsChecked="{Binding IsCtemp}" />
+            </StackPanel>
+            <lv:CartesianChart Grid.Row="2">
+                <lv:CartesianChart.Series>
+                    <lv:LineSeries Fill="Transparent"
+                                   Values="{Binding RamChartValues}"
+                                   Visibility="{Binding IsRam, Converter={StaticResource BoolToVisConv}}" />
+                    <lv:LineSeries Fill="Transparent"
+                                   Values="{Binding UsageChartValues}"
+                                   Visibility="{Binding IsUsage, Converter={StaticResource BoolToVisConv}}" />
+                    <lv:LineSeries Fill="Transparent"
+                                   Values="{Binding StempChartValues}"
+                                   Visibility="{Binding IsStemp, Converter={StaticResource BoolToVisConv}}" />
+                    <lv:LineSeries Fill="Transparent"
+                                   Values="{Binding CtempChartValues}"
+                                   Visibility="{Binding IsCtemp, Converter={StaticResource BoolToVisConv}}" />
+                </lv:CartesianChart.Series>
+                <lv:CartesianChart.AxisX>
+                    <lv:Axis LabelFormatter="{Binding DateTimeFormatter}"
+                             ShowLabels="True" />
+                </lv:CartesianChart.AxisX>
+                <lv:CartesianChart.AxisY>
+                    <lv:Axis ShowLabels="True" />
+                </lv:CartesianChart.AxisY>
+            </lv:CartesianChart>
+        </Grid>
+    </Grid>
+</Window>
