@@ -47,6 +47,24 @@ namespace MonitorApp
             return (int)ch.GetAxesCount();
         }
 
+        public void ChangeSize()
+        {
+            ch.Transaction("XARRSIZE=10000000");
+        }
+
+        public void DeclareAndWriteVariable(object points)
+        {
+            double[] pointPos = (double[])points;
+            ch.DeclareVariable(AcsplVariableType.ACSC_STATIC_REAL_TYPE, $"Test({pointPos.Length})");
+            ch.WriteVariable(points, "Test");
+        }
+
+        public void ReadVariableAndClear()
+        {
+            ch.ReadVariable("Test");
+            ch.ClearVariables();
+        }
+
         public void EnableFaultEvent()
         {
             ch.EnableEvent(Interrupts.ACSC_INTR_COMM_CHANNEL_CLOSED);
@@ -120,14 +138,6 @@ namespace MonitorApp
             return address;
         }
 
-        //            //一分钟更新一次
-        //            if (CompareTime(PreTime,DateTime.Now))
-        //            {
-        //                view.Usage = GetUsege();
-        //                view.Ram = GetRam();
-        //                SaveLog(view.Usage, view.Ram, GetLOG());
-        //                PreTime = DateTime.Now;
-        //            }
         private bool CompareTime(DateTime preTime, DateTime afterTime)
         {
             var pretime = preTime.Ticks / 600000000;

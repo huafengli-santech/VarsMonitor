@@ -1,6 +1,7 @@
 using Caliburn.Micro;
 using LiveCharts;
 using LiveCharts.Configurations;
+using Microsoft.Win32;
 using MonitorApp.Dates;
 using MonitorApp.Logs;
 using System;
@@ -264,6 +265,31 @@ namespace MonitorApp
         {
             ACS.GetInstance().EnableFaultEvent();
             UpdateLog("使能中断成功", Log.ErrorLevel.Info);
+        }
+
+        public void btnWriteRead()
+        {
+            ACS.GetInstance().ChangeSize();
+            Thread threadFingerRegister = new Thread(new ThreadStart(WriteReadFunc));
+            threadFingerRegister.Start();
+            threadFingerRegister.IsBackground = true;
+        }
+
+        private void WriteReadFunc()
+        {
+            while (ACS.GetInstance().IsConnected())
+            {
+                Random random;
+                double[] points = new double[500000];
+                for (int i = 0; i < points.Length; i++)
+                {
+                    random = new Random(DateTime.Now.Millisecond);
+                    points[i] = random.NextDouble();
+                }
+                ACS.GetInstance().DeclareAndWriteVariable(points);
+                Thread.Sleep(500);
+                ACS.GetInstance().ReadVariableAndClear();
+            }
         }
 
         public void ClearFaultFunc()
