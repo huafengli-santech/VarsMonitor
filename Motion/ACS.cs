@@ -71,8 +71,8 @@ namespace MonitorApp
             ch.EnableEvent(Interrupts.ACSC_INTR_EMERGENCY);
             ch.EnableEvent(Interrupts.ACSC_INTR_SYSTEM_ERROR);
             ch.EnableEvent(Interrupts.ACSC_INTR_ETHERCAT_ERROR);
-            ch.EnableEvent(Interrupts.ACSC_INTR_MOTION_FAILURE);
             ch.EnableEvent(Interrupts.ACSC_INTR_MOTOR_FAILURE);
+            ch.EnableEvent(Interrupts.ACSC_INTR_MOTION_FAILURE);
             ch.COMMCHANNELCLOSED += Ch_COMMCHANNELCLOSED;
             ch.MOTORFAILURE += Ch_MOTORFAILURE;
             ch.MOTIONFAILURE += Ch_MOTIONFAILURE;
@@ -174,6 +174,8 @@ namespace MonitorApp
                     {
                         int errorcode = ch.GetMotionError((Axis)i);
                         Log.GetInstance().SaveLog($"[MotionError] Axis:{i} Error Code:{errorcode} Error Message: {ch.GetErrorString(errorcode)}", Log.ErrorLevel.Error);
+                        int errorcodes = ch.GetMotorError((Axis)i);
+                        Log.GetInstance().SaveLog($"[MotorError] Axis:{i} Error Code:{errorcodes} Error Message:{ch.GetErrorString(errorcodes)}", Log.ErrorLevel.Error);
                     }
                 }
             }
